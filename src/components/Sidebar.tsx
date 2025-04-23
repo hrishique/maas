@@ -43,7 +43,7 @@ export const Sidebar = ({ onNavigate, activeSection }: SidebarProps) => {
           <h3 className="text-xs uppercase text-muted-foreground mb-2 px-4">Dashboard</h3>
           <NavItem 
             icon={<LayoutGrid size={18} />} 
-            label="Marketplace" 
+            label="NFT Mining" 
             active={activeSection === "marketplace"}
             onClick={() => onNavigate("marketplace")}
           />
@@ -141,7 +141,7 @@ export const MobileSidebar = ({ onNavigate, activeSection }: SidebarProps) => {
               <h3 className="text-xs uppercase text-muted-foreground mb-2 px-4">Dashboard</h3>
               <NavItem 
                 icon={<LayoutGrid size={18} />} 
-                label="Marketplace" 
+                label="NFT Mining" 
                 active={activeSection === "marketplace"}
                 onClick={() => handleNavigate("marketplace")}
               />

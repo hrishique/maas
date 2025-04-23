@@ -2,12 +2,11 @@
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Slider } from "@/components/ui/slider";
 import { BarChart, TrendingUp, CircleDollarSign } from "lucide-react";
 
-// Sample mining machines data
+// Sample mining machines NFT data
 const MACHINES = [
   {
     id: 1,
@@ -16,8 +15,8 @@ const MACHINES = [
     price: 0.025,
     uptime: 99.8,
     power: "3250W",
-    capacity: 100,
-    owned: 15,
+    totalNfts: 20,
+    soldNfts: 5,
     image: "https://via.placeholder.com/300x200/1A1F2C/FFFFFF?text=S19+Pro"
   },
   {
@@ -27,8 +26,8 @@ const MACHINES = [
     price: 0.028,
     uptime: 99.2,
     power: "3400W",
-    capacity: 100,
-    owned: 0,
+    totalNfts: 20,
+    soldNfts: 12,
     image: "https://via.placeholder.com/300x200/1A1F2C/FFFFFF?text=M30S++"
   },
   {
@@ -38,8 +37,8 @@ const MACHINES = [
     price: 0.032,
     uptime: 98.7,
     power: "3276W",
-    capacity: 100,
-    owned: 5,
+    totalNfts: 20,
+    soldNfts: 20,
     image: "https://via.placeholder.com/300x200/1A1F2C/FFFFFF?text=M50"
   },
   {
@@ -49,35 +48,34 @@ const MACHINES = [
     price: 0.020,
     uptime: 97.5,
     power: "3010W",
-    capacity: 100,
-    owned: 0,
+    totalNfts: 20,
+    soldNfts: 0,
     image: "https://via.placeholder.com/300x200/1A1F2C/FFFFFF?text=A1246"
   }
 ];
 
 export const MachineMarketplace = () => {
   const [selectedMachine, setSelectedMachine] = useState<any>(null);
-  const [purchasePercentage, setPurchasePercentage] = useState(10);
+  const [selectedNFTId, setSelectedNFTId] = useState<number | null>(null);
   
-  const handleBuyFraction = (machine: any) => {
+  const handleBuyNFT = (machine: any, nftId: number) => {
     setSelectedMachine(machine);
-    // Calculate a default percentage based on available capacity
-    const defaultPercentage = Math.min(25, 100 - machine.owned);
-    setPurchasePercentage(defaultPercentage);
+    setSelectedNFTId(nftId);
   };
   
   const handlePurchaseComplete = () => {
     // Here you would typically interact with the blockchain
     // For now, just close the dialog
     setSelectedMachine(null);
+    setSelectedNFTId(null);
   };
   
   return (
     <section className="py-8 animate-fade-in">
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h2 className="text-2xl font-bold">Machine Marketplace</h2>
-          <p className="text-muted-foreground">Purchase fractions of Bitcoin mining machines</p>
+          <h2 className="text-2xl font-bold">MINT NFT</h2>
+          <p className="text-muted-foreground">Purchase NFT ownership of Bitcoin mining machines</p>
         </div>
         
         <div className="flex items-center gap-4">
@@ -86,22 +84,14 @@ export const MachineMarketplace = () => {
             Available
           </div>
           <div className="text-sm text-muted-foreground">
-            <span className="inline-block w-3 h-3 bg-crypto-warning rounded-full mr-1"></span>
-            Partial
-          </div>
-          <div className="text-sm text-muted-foreground">
-            <span className="inline-block w-3 h-3 bg-crypto-error rounded-full mr-1"></span>
-            Sold Out
+            <span className="inline-block w-3 h-3 bg-secondary rounded-full mr-1"></span>
+            Sold
           </div>
         </div>
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {MACHINES.map((machine) => {
-          const availabilityColor = machine.owned === 100 
-            ? "bg-crypto-error" 
-            : machine.owned > 0 ? "bg-crypto-warning" : "bg-crypto-success";
-          
           return (
             <Card key={machine.id} className="glass-card overflow-hidden border border-border/50 transition-all hover:border-primary/50 hover:shadow-lg">
               <div className="h-48 overflow-hidden">
@@ -111,8 +101,8 @@ export const MachineMarketplace = () => {
               <CardHeader className="pb-2">
                 <div className="flex justify-between items-start">
                   <CardTitle>{machine.name}</CardTitle>
-                  <div className={`px-2 py-1 rounded text-xs font-medium ${availabilityColor} bg-opacity-20`}>
-                    {machine.owned === 100 ? "Sold Out" : "Available"}
+                  <div className={`px-2 py-1 rounded text-xs font-medium ${machine.soldNfts === machine.totalNfts ? "bg-crypto-error bg-opacity-20" : "bg-crypto-success bg-opacity-20"}`}>
+                    {machine.soldNfts === machine.totalNfts ? "Sold Out" : `${machine.totalNfts - machine.soldNfts}/${machine.totalNfts} Available`}
                   </div>
                 </div>
                 <CardDescription>Hashrate: {machine.hashrate}</CardDescription>
@@ -130,87 +120,116 @@ export const MachineMarketplace = () => {
                   
                   <div className="flex justify-between text-sm">
                     <span className="flex items-center gap-1">
-                      <BarChart size={14} /> Capacity
+                      <BarChart size={14} /> NFTs Minted
                     </span>
-                    <span>{100 - machine.owned}% Available</span>
+                    <span>{machine.soldNfts}/{machine.totalNfts}</span>
                   </div>
-                  <Progress value={100 - machine.owned} className="h-1.5" />
-                  
-                  {machine.owned > 0 && (
-                    <div className="bg-secondary/50 p-2 rounded-md text-xs">
-                      You own: <span className="font-medium text-primary">{machine.owned}%</span>
-                    </div>
-                  )}
+                  <Progress value={(machine.soldNfts / machine.totalNfts) * 100} className="h-1.5" />
                   
                   <div className="flex justify-between items-center pt-2">
                     <div className="flex items-center">
                       <CircleDollarSign size={16} className="text-crypto-bitcoin mr-1" />
                       <span className="font-mono font-bold">{machine.price} BTC</span>
                     </div>
-                    <span className="text-xs text-muted-foreground">per 1% share</span>
+                    <span className="text-xs text-muted-foreground">per NFT</span>
                   </div>
                 </div>
               </CardContent>
               
               <CardFooter className="pt-0">
-                <Button 
-                  className="w-full" 
-                  disabled={machine.owned === 100}
-                  variant={machine.owned === 100 ? "secondary" : "default"}
-                  onClick={() => handleBuyFraction(machine)}
-                >
-                  {machine.owned === 100 ? "Sold Out" : "Buy Fraction"}
-                </Button>
+                {machine.soldNfts === machine.totalNfts ? (
+                  <Button variant="secondary" disabled className="w-full">Sold Out</Button>
+                ) : (
+                  <Button 
+                    className="w-full" 
+                    onClick={() => handleBuyNFT(machine, machine.soldNfts + 1)}
+                  >
+                    Mint NFT
+                  </Button>
+                )}
               </CardFooter>
             </Card>
           );
         })}
       </div>
       
+      {/* NFT Grid for available NFTs */}
+      {MACHINES.map((machine) => {
+        if (machine.soldNfts === machine.totalNfts) return null;
+        
+        return (
+          <div key={`nft-grid-${machine.id}`} className="mt-8">
+            <h3 className="text-lg font-medium mb-4">{machine.name} - Available NFTs</h3>
+            <div className="grid grid-cols-5 md:grid-cols-10 gap-2">
+              {Array.from({ length: machine.totalNfts }).map((_, idx) => {
+                const nftId = idx + 1;
+                const isSold = nftId <= machine.soldNfts;
+                
+                return (
+                  <div 
+                    key={`nft-${machine.id}-${nftId}`}
+                    className={`
+                      aspect-square rounded-md flex items-center justify-center border border-border/40
+                      ${isSold ? 'bg-secondary cursor-not-allowed' : 'bg-primary/10 hover:bg-primary/20 cursor-pointer'}
+                    `}
+                    onClick={() => !isSold && handleBuyNFT(machine, nftId)}
+                  >
+                    <span className={`font-medium ${isSold ? 'text-muted-foreground' : 'text-primary'}`}>
+                      #{nftId}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        );
+      })}
+      
       {/* Purchase Dialog */}
-      {selectedMachine && (
+      {selectedMachine && selectedNFTId && (
         <Dialog open={!!selectedMachine} onOpenChange={(open) => !open && setSelectedMachine(null)}>
           <DialogContent className="glass-card">
             <DialogHeader>
-              <DialogTitle>Purchase Mining Share</DialogTitle>
+              <DialogTitle>Mint NFT</DialogTitle>
               <DialogDescription>
-                You are purchasing a fraction of {selectedMachine.name}
+                You are minting NFT #{selectedNFTId} of {selectedMachine.name}
               </DialogDescription>
             </DialogHeader>
             
             <div className="space-y-6 py-4">
-              <div className="space-y-2">
-                <div className="flex justify-between items-center">
-                  <span>Share Percentage</span>
-                  <span className="font-mono font-bold">{purchasePercentage}%</span>
+              <div className="bg-secondary p-4 rounded-md">
+                <div className="flex justify-center items-center mb-4">
+                  <div className="w-20 h-20 bg-primary/20 rounded-md flex items-center justify-center">
+                    <span className="text-xl font-bold">#{selectedNFTId}</span>
+                  </div>
                 </div>
-                <Slider
-                  min={1}
-                  max={100 - selectedMachine.owned}
-                  step={1}
-                  value={[purchasePercentage]}
-                  onValueChange={(value) => setPurchasePercentage(value[0])}
-                  className="w-full"
-                />
-                <p className="text-xs text-muted-foreground">
-                  Maximum available: {100 - selectedMachine.owned}%
-                </p>
+                
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span>Machine:</span>
+                    <span className="font-medium">{selectedMachine.name}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Hashrate:</span>
+                    <span className="font-medium">{selectedMachine.hashrate}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Uptime:</span>
+                    <span className="font-medium">{selectedMachine.uptime}%</span>
+                  </div>
+                </div>
               </div>
               
               <div className="rounded-md bg-secondary p-3">
                 <div className="flex justify-between items-center mb-2">
-                  <span className="text-sm">Price per 1%:</span>
+                  <span className="text-sm">NFT Price:</span>
                   <span className="font-mono">{selectedMachine.price} BTC</span>
-                </div>
-                <div className="flex justify-between items-center mb-2">
-                  <span className="text-sm">Quantity:</span>
-                  <span className="font-mono">{purchasePercentage}%</span>
                 </div>
                 <div className="border-t border-border pt-2 mt-2">
                   <div className="flex justify-between items-center">
                     <span className="font-medium">Total Cost:</span>
                     <span className="font-mono font-bold">
-                      {(selectedMachine.price * purchasePercentage).toFixed(5)} BTC
+                      {selectedMachine.price.toFixed(5)} BTC
                     </span>
                   </div>
                 </div>
@@ -241,7 +260,7 @@ export const MachineMarketplace = () => {
                 Cancel
               </Button>
               <Button onClick={handlePurchaseComplete}>
-                Confirm Purchase
+                Confirm Mint
               </Button>
             </DialogFooter>
           </DialogContent>

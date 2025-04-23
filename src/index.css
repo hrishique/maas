@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -43,6 +44,15 @@
     --sidebar-accent-foreground: 240 5% 84%;
     --sidebar-border: 240 5% 10%;
     --sidebar-ring: 263 85% 60%;
+
+    /* NFT specific colors */
+    --nft-available: 147 64% 54%;
+    --nft-sold: 240 10% 23%;
+    --nft-error: 0 84% 60%;
+    --crypto-bitcoin: 35 79% 66%;
+    --crypto-success: 142 69% 58%;
+    --crypto-warning: 36 100% 65%;
+    --crypto-error: 0 84% 60%;
   }
 }
 
