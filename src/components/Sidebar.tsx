@@ -1,7 +1,6 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { LayoutGrid, CircleDollarSign, BarChart, Activity, Wallet } from "lucide-react";
+import { LayoutGrid, CircleDollarSign, BarChart, Activity, Wallet, Tag, ShoppingCart } from "lucide-react";
 
 interface NavItemProps {
   icon: React.ReactNode;
@@ -42,10 +41,16 @@ export const Sidebar = ({ onNavigate, activeSection }: SidebarProps) => {
         <div>
           <h3 className="text-xs uppercase text-muted-foreground mb-2 px-4">Dashboard</h3>
           <NavItem 
-            icon={<LayoutGrid size={18} />} 
-            label="NFT Mining" 
+            icon={<Tag size={18} />} 
+            label="Mint NFT" 
             active={activeSection === "marketplace"}
             onClick={() => onNavigate("marketplace")}
+          />
+          <NavItem 
+            icon={<ShoppingCart size={18} />} 
+            label="NFT Marketplace" 
+            active={activeSection === "nftmarket"}
+            onClick={() => onNavigate("nftmarket")}
           />
           <NavItem 
             icon={<BarChart size={18} />} 
@@ -140,10 +145,16 @@ export const MobileSidebar = ({ onNavigate, activeSection }: SidebarProps) => {
             <div>
               <h3 className="text-xs uppercase text-muted-foreground mb-2 px-4">Dashboard</h3>
               <NavItem 
-                icon={<LayoutGrid size={18} />} 
-                label="NFT Mining" 
+                icon={<Tag size={18} />} 
+                label="Mint NFT" 
                 active={activeSection === "marketplace"}
                 onClick={() => handleNavigate("marketplace")}
+              />
+              <NavItem 
+                icon={<ShoppingCart size={18} />} 
+                label="NFT Marketplace" 
+                active={activeSection === "nftmarket"}
+                onClick={() => handleNavigate("nftmarket")}
               />
               <NavItem 
                 icon={<BarChart size={18} />} 

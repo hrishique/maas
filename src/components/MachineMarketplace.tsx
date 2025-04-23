@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -6,7 +5,6 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Button } from "@/components/ui/button";
 import { BarChart, TrendingUp, CircleDollarSign } from "lucide-react";
 
-// Sample mining machines NFT data
 const MACHINES = [
   {
     id: 1,
@@ -56,18 +54,25 @@ const MACHINES = [
 
 export const MachineMarketplace = () => {
   const [selectedMachine, setSelectedMachine] = useState<any>(null);
-  const [selectedNFTId, setSelectedNFTId] = useState<number | null>(null);
+  const [selectedNFTs, setSelectedNFTs] = useState<number[]>([]);
   
-  const handleBuyNFT = (machine: any, nftId: number) => {
+  const handleBuyNFT = (machine: any) => {
     setSelectedMachine(machine);
-    setSelectedNFTId(nftId);
+    setSelectedNFTs([]);
+  };
+  
+  const toggleNFTSelection = (nftId: number) => {
+    setSelectedNFTs(prev => {
+      if (prev.includes(nftId)) {
+        return prev.filter(id => id !== nftId);
+      }
+      return [...prev, nftId];
+    });
   };
   
   const handlePurchaseComplete = () => {
-    // Here you would typically interact with the blockchain
-    // For now, just close the dialog
     setSelectedMachine(null);
-    setSelectedNFTId(null);
+    setSelectedNFTs([]);
   };
   
   return (
@@ -142,7 +147,7 @@ export const MachineMarketplace = () => {
                 ) : (
                   <Button 
                     className="w-full" 
-                    onClick={() => handleBuyNFT(machine, machine.soldNfts + 1)}
+                    onClick={() => handleBuyNFT(machine)}
                   >
                     Mint NFT
                   </Button>
@@ -153,84 +158,55 @@ export const MachineMarketplace = () => {
         })}
       </div>
       
-      {/* NFT Grid for available NFTs */}
-      {MACHINES.map((machine) => {
-        if (machine.soldNfts === machine.totalNfts) return null;
-        
-        return (
-          <div key={`nft-grid-${machine.id}`} className="mt-8">
-            <h3 className="text-lg font-medium mb-4">{machine.name} - Available NFTs</h3>
-            <div className="grid grid-cols-5 md:grid-cols-10 gap-2">
-              {Array.from({ length: machine.totalNfts }).map((_, idx) => {
-                const nftId = idx + 1;
-                const isSold = nftId <= machine.soldNfts;
-                
-                return (
-                  <div 
-                    key={`nft-${machine.id}-${nftId}`}
-                    className={`
-                      aspect-square rounded-md flex items-center justify-center border border-border/40
-                      ${isSold ? 'bg-secondary cursor-not-allowed' : 'bg-primary/10 hover:bg-primary/20 cursor-pointer'}
-                    `}
-                    onClick={() => !isSold && handleBuyNFT(machine, nftId)}
-                  >
-                    <span className={`font-medium ${isSold ? 'text-muted-foreground' : 'text-primary'}`}>
-                      #{nftId}
-                    </span>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        );
-      })}
-      
       {/* Purchase Dialog */}
-      {selectedMachine && selectedNFTId && (
+      {selectedMachine && (
         <Dialog open={!!selectedMachine} onOpenChange={(open) => !open && setSelectedMachine(null)}>
-          <DialogContent className="glass-card">
+          <DialogContent className="glass-card max-w-2xl">
             <DialogHeader>
               <DialogTitle>Mint NFT</DialogTitle>
               <DialogDescription>
-                You are minting NFT #{selectedNFTId} of {selectedMachine.name}
+                Select the NFT slots you want to mint for {selectedMachine.name}
               </DialogDescription>
             </DialogHeader>
             
-            <div className="space-y-6 py-4">
-              <div className="bg-secondary p-4 rounded-md">
-                <div className="flex justify-center items-center mb-4">
-                  <div className="w-20 h-20 bg-primary/20 rounded-md flex items-center justify-center">
-                    <span className="text-xl font-bold">#{selectedNFTId}</span>
-                  </div>
-                </div>
-                
-                <div className="space-y-2 text-sm">
-                  <div className="flex justify-between">
-                    <span>Machine:</span>
-                    <span className="font-medium">{selectedMachine.name}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Hashrate:</span>
-                    <span className="font-medium">{selectedMachine.hashrate}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Uptime:</span>
-                    <span className="font-medium">{selectedMachine.uptime}%</span>
-                  </div>
-                </div>
+            <div className="space-y-6">
+              <div className="grid grid-cols-10 gap-1">
+                {Array.from({ length: selectedMachine.totalNfts }).map((_, idx) => {
+                  const nftId = idx + 1;
+                  const isSold = nftId <= selectedMachine.soldNfts;
+                  const isSelected = selectedNFTs.includes(nftId);
+                  
+                  return (
+                    <div 
+                      key={`nft-${selectedMachine.id}-${nftId}`}
+                      onClick={() => !isSold && toggleNFTSelection(nftId)}
+                      className={`
+                        aspect-square rounded-md flex items-center justify-center text-xs font-medium border border-border/40
+                        ${isSold ? 'bg-secondary cursor-not-allowed' : 
+                          isSelected ? 'bg-primary/20 border-primary cursor-pointer' : 
+                          'bg-primary/10 hover:bg-primary/20 cursor-pointer'}
+                      `}
+                    >
+                      #{nftId}
+                    </div>
+                  );
+                })}
               </div>
               
-              <div className="rounded-md bg-secondary p-3">
-                <div className="flex justify-between items-center mb-2">
-                  <span className="text-sm">NFT Price:</span>
-                  <span className="font-mono">{selectedMachine.price} BTC</span>
+              <div className="bg-secondary p-4 rounded-md">
+                <div className="flex justify-between items-center mb-4">
+                  <span>Selected NFTs:</span>
+                  <span className="font-mono">{selectedNFTs.length}</span>
                 </div>
-                <div className="border-t border-border pt-2 mt-2">
-                  <div className="flex justify-between items-center">
-                    <span className="font-medium">Total Cost:</span>
-                    <span className="font-mono font-bold">
-                      {selectedMachine.price.toFixed(5)} BTC
-                    </span>
+                
+                <div className="space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span>Price per NFT:</span>
+                    <span className="font-mono">{selectedMachine.price} BTC</span>
+                  </div>
+                  <div className="flex justify-between font-medium pt-2 border-t border-border">
+                    <span>Total Cost:</span>
+                    <span className="font-mono">{(selectedMachine.price * selectedNFTs.length).toFixed(5)} BTC</span>
                   </div>
                 </div>
               </div>
@@ -259,8 +235,11 @@ export const MachineMarketplace = () => {
               <Button variant="outline" onClick={() => setSelectedMachine(null)}>
                 Cancel
               </Button>
-              <Button onClick={handlePurchaseComplete}>
-                Confirm Mint
+              <Button 
+                onClick={handlePurchaseComplete}
+                disabled={selectedNFTs.length === 0}
+              >
+                Confirm Mint ({selectedNFTs.length} NFTs)
               </Button>
             </DialogFooter>
           </DialogContent>
