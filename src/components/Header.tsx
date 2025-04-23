@@ -1,10 +1,10 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Wallet } from "lucide-react";
+import { Logo } from "./Logo";
 
 export const Header = () => {
   const [isConnected, setIsConnected] = useState(false);
@@ -27,9 +27,7 @@ export const Header = () => {
   return (
     <header className="w-full py-4 px-6 flex items-center justify-between border-b border-border/40 bg-background/95 backdrop-blur-sm">
       <div className="flex items-center">
-        <div className="mr-2 h-8 w-8 rounded-full bg-primary flex items-center justify-center">
-          <span className="text-white font-bold text-sm">M</span>
-        </div>
+        <Logo size={32} className="mr-2" />
         <h1 className="text-xl font-bold text-gradient">MaaS</h1>
         <span className="ml-2 text-xs px-2 py-0.5 rounded bg-accent/20 text-accent-foreground">
           Beta

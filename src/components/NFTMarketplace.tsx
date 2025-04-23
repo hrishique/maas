@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -15,9 +14,9 @@ const MARKETPLACE_NFTS = [
     machineName: "BTC Miner S19 Pro",
     nftId: 3,
     seller: "0x71...3d4f",
-    price: 0.030, // Higher price than mint price (0.025)
+    price: 0.030,
     hashrate: "110 TH/s",
-    image: "https://via.placeholder.com/300x200/1A1F2C/FFFFFF?text=S19+Pro",
+    image: `https://images.unsplash.com/photo-${encodeURIComponent('1518770660439-4636190af475')}?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D`
   },
   {
     id: 102,
@@ -25,9 +24,9 @@ const MARKETPLACE_NFTS = [
     machineName: "BTC Miner M30S++",
     nftId: 5,
     seller: "0x89...7a2c",
-    price: 0.033, // Higher price than mint price (0.028)
+    price: 0.033,
     hashrate: "112 TH/s",
-    image: "https://via.placeholder.com/300x200/1A1F2C/FFFFFF?text=M30S++",
+    image: `https://images.unsplash.com/photo-${encodeURIComponent('1581091226825-a6a2a5aee158')}?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D`
   },
   {
     id: 103,
@@ -37,7 +36,7 @@ const MARKETPLACE_NFTS = [
     seller: "0x32...9e8f",
     price: 0.028,
     hashrate: "110 TH/s",
-    image: "https://via.placeholder.com/300x200/1A1F2C/FFFFFF?text=S19+Pro",
+    image: `https://images.unsplash.com/photo-${encodeURIComponent('1487058792275-0ad4aaf24ca7')}?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D`
   }
 ];
 
@@ -49,7 +48,7 @@ const USER_OWNED_NFTS = [
     machineName: "BTC Miner S19 Pro",
     nftId: 2,
     hashrate: "110 TH/s",
-    image: "https://via.placeholder.com/300x200/1A1F2C/FFFFFF?text=S19+Pro",
+    image: `https://images.unsplash.com/photo-${encodeURIComponent('1487058792275-0ad4aaf24ca7')}?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D`,
     listed: false,
   },
   {
@@ -58,7 +57,7 @@ const USER_OWNED_NFTS = [
     machineName: "BTC Miner M30S++",
     nftId: 9,
     hashrate: "112 TH/s", 
-    image: "https://via.placeholder.com/300x200/1A1F2C/FFFFFF?text=M30S++",
+    image: `https://images.unsplash.com/photo-${encodeURIComponent('1605810230434-7631ac76ec81')}?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D`,
     listed: true,
     price: 0.035
   }
@@ -69,26 +68,24 @@ export const NFTMarketplace = () => {
   const [isBuyDialogOpen, setIsBuyDialogOpen] = useState(false);
   const [selectedNFT, setSelectedNFT] = useState<any>(null);
   const [listingPrice, setListingPrice] = useState<string>("");
-  
+
   const handleListNFT = (nft: any) => {
     setSelectedNFT(nft);
     setListingPrice(nft.listed ? nft.price.toString() : "");
     setIsListingDialogOpen(true);
   };
-  
+
   const handleBuyNFT = (nft: any) => {
     setSelectedNFT(nft);
     setIsBuyDialogOpen(true);
   };
-  
+
   const handleListingComplete = () => {
-    // Here you would typically interact with the blockchain
     setIsListingDialogOpen(false);
     setSelectedNFT(null);
   };
-  
+
   const handlePurchaseComplete = () => {
-    // Here you would typically interact with the blockchain
     setIsBuyDialogOpen(false);
     setSelectedNFT(null);
   };
@@ -100,7 +97,6 @@ export const NFTMarketplace = () => {
         <p className="text-muted-foreground">Buy and sell mining machine NFTs</p>
       </div>
       
-      {/* Your NFTs Section */}
       <div className="mb-12">
         <h3 className="text-xl font-medium mb-4">Your NFTs</h3>
         {USER_OWNED_NFTS.length === 0 ? (
@@ -153,7 +149,6 @@ export const NFTMarketplace = () => {
         )}
       </div>
       
-      {/* Marketplace Section */}
       <div>
         <h3 className="text-xl font-medium mb-4">Available on Marketplace</h3>
         {MARKETPLACE_NFTS.length === 0 ? (
@@ -209,7 +204,6 @@ export const NFTMarketplace = () => {
         )}
       </div>
       
-      {/* Listing Dialog */}
       <Dialog open={isListingDialogOpen} onOpenChange={setIsListingDialogOpen}>
         <DialogContent className="glass-card">
           <DialogHeader>
@@ -285,7 +279,6 @@ export const NFTMarketplace = () => {
         </DialogContent>
       </Dialog>
       
-      {/* Buy Dialog */}
       <Dialog open={isBuyDialogOpen} onOpenChange={setIsBuyDialogOpen}>
         <DialogContent className="glass-card">
           <DialogHeader>

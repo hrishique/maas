@@ -15,7 +15,7 @@ const MACHINES = [
     power: "3250W",
     totalNfts: 20,
     soldNfts: 5,
-    image: "https://via.placeholder.com/300x200/1A1F2C/FFFFFF?text=S19+Pro"
+    image: `https://images.unsplash.com/photo-${encodeURIComponent('1587831990369-4e281e19c53e')}?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D`
   },
   {
     id: 2,
@@ -26,7 +26,7 @@ const MACHINES = [
     power: "3400W",
     totalNfts: 20,
     soldNfts: 12,
-    image: "https://via.placeholder.com/300x200/1A1F2C/FFFFFF?text=M30S++"
+    image: `https://images.unsplash.com/photo-${encodeURIComponent('1461749280684-dccba630e2f6')}?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D`
   },
   {
     id: 3,

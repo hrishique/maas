@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { LayoutGrid, CircleDollarSign, BarChart, Activity, Wallet, Tag, ShoppingCart } from "lucide-react";
+import { Logo } from "./Logo";
 
 interface NavItemProps {
   icon: React.ReactNode;
@@ -31,9 +32,7 @@ export const Sidebar = ({ onNavigate, activeSection }: SidebarProps) => {
   return (
     <div className="w-64 p-4 border-r border-border/40 h-screen sticky top-0 bg-background/95 backdrop-blur-sm">
       <div className="flex items-center gap-2 mb-8">
-        <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center">
-          <span className="text-white font-bold text-sm">M</span>
-        </div>
+        <Logo size={32} />
         <h1 className="text-xl font-bold text-gradient">MaaS</h1>
       </div>
       
@@ -125,9 +124,7 @@ export const MobileSidebar = ({ onNavigate, activeSection }: SidebarProps) => {
         <div className="p-4 h-full flex flex-col">
           <div className="flex items-center justify-between mb-8">
             <div className="flex items-center gap-2">
-              <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center">
-                <span className="text-white font-bold text-sm">M</span>
-              </div>
+              <Logo size={32} />
               <h1 className="text-xl font-bold text-gradient">MaaS</h1>
             </div>
             
