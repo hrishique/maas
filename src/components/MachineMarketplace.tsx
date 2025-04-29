@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -37,7 +38,7 @@ const MACHINES = [
     power: "3276W",
     totalNfts: 20,
     soldNfts: 20,
-    image: "https://via.placeholder.com/300x200/1A1F2C/FFFFFF?text=M50"
+    image: `https://images.unsplash.com/photo-${encodeURIComponent('1488590528505-98d2b5aba04b')}?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D`
   },
   {
     id: 4,
@@ -48,7 +49,7 @@ const MACHINES = [
     power: "3010W",
     totalNfts: 20,
     soldNfts: 0,
-    image: "https://via.placeholder.com/300x200/1A1F2C/FFFFFF?text=A1246"
+    image: `https://images.unsplash.com/photo-${encodeURIComponent('1531297484001-80022131f5a1')}?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D`
   }
 ];
 
