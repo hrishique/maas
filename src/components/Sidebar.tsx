@@ -1,4 +1,5 @@
-import { useState } from "react";
+
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { LayoutGrid, CircleDollarSign, BarChart, Activity, Wallet, Tag, ShoppingCart } from "lucide-react";
 import { Logo } from "./Logo";
@@ -28,7 +29,50 @@ interface SidebarProps {
   activeSection: string;
 }
 
+// Fetch BTC price from CoinGecko API
+const useBtcPrice = () => {
+  const [price, setPrice] = useState<number | null>(null);
+  const [priceChange, setPriceChange] = useState<number | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchBtcPrice = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch(
+          "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd&include_24hr_change=true"
+        );
+        
+        if (!response.ok) {
+          throw new Error("Failed to fetch BTC price");
+        }
+        
+        const data = await response.json();
+        setPrice(data.bitcoin.usd);
+        setPriceChange(data.bitcoin.usd_24h_change);
+        setError(null);
+      } catch (err) {
+        console.error("Error fetching BTC price:", err);
+        setError("Failed to fetch price");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBtcPrice();
+
+    // Refresh price every 60 seconds
+    const interval = setInterval(fetchBtcPrice, 60000);
+    return () => clearInterval(interval);
+  }, []);
+
+  return { price, priceChange, loading, error };
+};
+
 export const Sidebar = ({ onNavigate, activeSection }: SidebarProps) => {
+  const { price, priceChange, loading, error } = useBtcPrice();
+  
   return (
     <div className="w-64 p-4 border-r border-border/40 h-screen sticky top-0 bg-background/95 backdrop-blur-sm">
       <div className="flex items-center gap-2 mb-8">
@@ -85,13 +129,31 @@ export const Sidebar = ({ onNavigate, activeSection }: SidebarProps) => {
       <div className="absolute bottom-8 left-4 right-4">
         <div className="p-4 rounded-lg glass-card space-y-2">
           <div className="text-sm font-medium">Current BTC Price</div>
-          <div className="font-mono text-lg font-bold text-gradient">$57,945.34</div>
-          <div className="text-xs text-crypto-success flex items-center">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-1">
-              <path d="M12 20V4M5 11l7-7 7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-            +1.24%
-          </div>
+          {loading ? (
+            <div className="h-8 w-full animate-pulse rounded bg-muted"></div>
+          ) : error ? (
+            <div className="font-mono text-lg font-bold text-red-500">Error loading price</div>
+          ) : (
+            <>
+              <div className="font-mono text-lg font-bold text-gradient">
+                ${price?.toLocaleString()}
+              </div>
+              <div className={`text-xs flex items-center ${priceChange && priceChange >= 0 ? 'text-crypto-success' : 'text-crypto-error'}`}>
+                <svg 
+                  width="12" 
+                  height="12" 
+                  viewBox="0 0 24 24" 
+                  fill="none" 
+                  xmlns="http://www.w3.org/2000/svg" 
+                  className="mr-1"
+                  style={{ transform: priceChange && priceChange < 0 ? 'rotate(180deg)' : 'none' }}
+                >
+                  <path d="M12 20V4M5 11l7-7 7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+                {priceChange ? `${Math.abs(priceChange).toFixed(2)}%` : "0.00%"}
+              </div>
+            </>
+          )}
         </div>
       </div>
     </div>
@@ -100,6 +162,7 @@ export const Sidebar = ({ onNavigate, activeSection }: SidebarProps) => {
 
 export const MobileSidebar = ({ onNavigate, activeSection }: SidebarProps) => {
   const [isOpen, setIsOpen] = useState(false);
+  const { price, priceChange, loading, error } = useBtcPrice();
   
   const handleNavigate = (section: string) => {
     onNavigate(section);
@@ -187,13 +250,31 @@ export const MobileSidebar = ({ onNavigate, activeSection }: SidebarProps) => {
           <div className="mt-auto mb-4">
             <div className="p-4 rounded-lg glass-card space-y-2">
               <div className="text-sm font-medium">Current BTC Price</div>
-              <div className="font-mono text-lg font-bold text-gradient">$57,945.34</div>
-              <div className="text-xs text-crypto-success flex items-center">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-1">
-                  <path d="M12 20V4M5 11l7-7 7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-                +1.24%
-              </div>
+              {loading ? (
+                <div className="h-8 w-full animate-pulse rounded bg-muted"></div>
+              ) : error ? (
+                <div className="font-mono text-lg font-bold text-red-500">Error loading price</div>
+              ) : (
+                <>
+                  <div className="font-mono text-lg font-bold text-gradient">
+                    ${price?.toLocaleString()}
+                  </div>
+                  <div className={`text-xs flex items-center ${priceChange && priceChange >= 0 ? 'text-crypto-success' : 'text-crypto-error'}`}>
+                    <svg 
+                      width="12" 
+                      height="12" 
+                      viewBox="0 0 24 24" 
+                      fill="none" 
+                      xmlns="http://www.w3.org/2000/svg" 
+                      className="mr-1"
+                      style={{ transform: priceChange && priceChange < 0 ? 'rotate(180deg)' : 'none' }}
+                    >
+                      <path d="M12 20V4M5 11l7-7 7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                    {priceChange ? `${Math.abs(priceChange).toFixed(2)}%` : "0.00%"}
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </div>
